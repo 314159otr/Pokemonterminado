@@ -1,90 +1,67 @@
 package es.android.pokemon;
 
-import android.content.ClipData;
 import android.os.Bundle;
-import android.view.DragEvent;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
-import es.android.pokemon.placeholder.PlaceholderContent;
 import es.android.pokemon.databinding.FragmentItemDetailBinding;
 
-/**
- * A fragment representing a single Item detail screen.
- * This fragment is either contained in a {@link ItemListFragment}
- * in two-pane mode (on larger screen devices) or self-contained
- * on handsets.
- */
 public class ItemDetailFragment extends Fragment {
-
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
-
-    /**
-     * The placeholder content this fragment is presenting.
-     */
-    private PlaceholderContent.PlaceholderItem mItem;
+    public static final Integer ARG_ITEM_ID = 0;
+    public static final String ARG_ITEM_NAME = "item_name";
+    public static final String ARG_DESCRIPTION = "item_description";
+    private Integer mItemId;
+    private String mItemName;
+    private String mItemDescrption;
     private CollapsingToolbarLayout mToolbarLayout;
     private TextView mTextView;
-
     private FragmentItemDetailBinding binding;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public ItemDetailFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the placeholder content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = PlaceholderContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+        if (getArguments().containsKey(ARG_ITEM_ID.toString())) {
+            mItemId = getArguments().getInt(ARG_ITEM_ID.toString());
+            mItemName = getArguments().getString(ARG_ITEM_NAME);
+            mItemDescrption = getArguments().getString(ARG_DESCRIPTION);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         binding = FragmentItemDetailBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
-
         mToolbarLayout = rootView.findViewById(R.id.toolbar_layout);
         mTextView = binding.itemDetail;
 
-        // Show the placeholder content as text in a TextView & in the toolbar if available.
+
         updateContent();
         return rootView;
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
     private void updateContent() {
-        if (mItem != null) {
-            mTextView.setText(mItem.details);
+        if (mItemId != null) {
+            mTextView.setText(mItemDescrption);
             if (mToolbarLayout != null) {
-                mToolbarLayout.setTitle(mItem.content);
+                mToolbarLayout.setTitle(mItemName);
             }
+            ImageView itemImage = binding.itemImage;
+            String pokemonImageUrl =
+                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + mItemId + ".png";
+            Glide.with(this)
+                    .load(pokemonImageUrl)
+                    .into(itemImage);
         }
     }
 }
